@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
+import Mongoose from "mongoose";
 
 dotenv.config();
 
@@ -10,6 +11,15 @@ const PORT = process.env.PORT || 3000;
 const fastify = Fastify({
   logger: true,
 });
+
+// Connect to db
+Mongoose.connect("mongodb://localhost:27017/users")
+  .then(() => {
+    console.log("Connected to mongodb");
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB", err);
+  });
 
 // Routes
 fastify.register(userRoutes, { prefix: "/api/user" });

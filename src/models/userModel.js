@@ -1,4 +1,4 @@
-import Mongoose from "mongoose";
+import Mongoose, { model } from "mongoose";
 
 const UserSchema = new Mongoose.Schema({
   userName: {
@@ -17,5 +17,5 @@ const UserSchema = new Mongoose.Schema({
     required: true,
   },
 });
-
-export default User = Mongoose.model("users", UserSchema);
+const User = Mongoose.model("users", UserSchema);
+export default User;
