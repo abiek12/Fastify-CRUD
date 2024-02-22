@@ -11,9 +11,10 @@ const fastify = Fastify({
   logger: true,
 });
 
-// pluggins
-fastify.register(userRoutes, { prefix: "/user" });
+// Routes
+fastify.register(userRoutes, { prefix: "/api/user" });
 
+// Start my server
 try {
   fastify.listen(PORT, () => {
     console.log(`Server running at ${PORT}`);
