@@ -13,7 +13,10 @@ const fastify = Fastify({
 });
 
 // Connect to db
-Mongoose.connect("mongodb://localhost:27017/users")
+Mongoose.connect("mongodb://localhost:27017/users", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => {
     console.log("Connected to mongodb");
   })
