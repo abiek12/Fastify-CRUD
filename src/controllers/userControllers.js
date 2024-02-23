@@ -41,7 +41,6 @@ export async function logIn(req, replay) {
       } else {
         // Decrypting and comparing password
         const passwordMatch = await bcrypt.compare(Password, user.password);
-        console.log(user.password);
         if (!passwordMatch) {
           replay.code(401).send("Authentcation Failed!");
         } else {
@@ -102,6 +101,13 @@ export async function updateUser(req, replay) {
 
 export async function deleteUser(req, replay) {
   try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      replay.code(404).send("User not found");
+    } else {
+      await user.deleteOne({ id: req.params.id });
+      replay.code(200).send("Deleted Successfully");
+    }
   } catch (error) {
     replay.code(500).send(error);
   }
