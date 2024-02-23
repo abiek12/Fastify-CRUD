@@ -81,15 +81,18 @@ export async function getUser(req, replay) {
 
 export async function updateUser(req, replay) {
   try {
-    const { username, email, password } = req.body;
-    if (!(username && email && password)) {
+    const { Username, Email, Password } = req.body;
+    if (!(Username && Email && Password)) {
       replay.code(400).send("All fields are compulsorry!");
     } else {
-      const user = User.findById(req.params.id);
+      const user = await User.findById(req.params.id);
       if (!user) {
         replay.code(404).send("User not found");
-      } else{
-
+      } else {
+        await user.updateOne({
+          $set: { userName: Username, email: Email, password: Password },
+        });
+        replay.code(200).send("Updated Successfully");
       }
     }
   } catch (error) {
