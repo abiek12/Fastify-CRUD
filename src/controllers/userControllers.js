@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
+import jsonwebtoken from "jsonwebtoken";
 
 export async function createUser(req, replay) {
   try {
@@ -18,8 +19,46 @@ export async function createUser(req, replay) {
           password: hashedPassword,
         });
         replay.code(201).send({
-          message: "User Created",
+          message: "User Created Successfully",
         });
+      }
+    }
+  } catch (error) {
+    replay.code(500).send(error);
+  }
+}
+
+export async function logIn(req, replay) {
+  try {
+    const { Email, Password } = req.body;
+    if (!(Email && Password)) {
+      replay.code(400).send("All fields are compulsorry!");
+    } else {
+      // Finding the user from db
+      const user = await User.findOne({ email: Email });
+      if (!user) {
+        replay.code(404).send("User Not Found!");
+      } else {
+        // Decrypting and comparing password
+        const passwordMatch = await bcrypt.compare(Password, user.password);
+        console.log(user.password);
+        if (!passwordMatch) {
+          replay.code(401).send("Authentcation Failed!");
+        } else {
+          // JWT
+          const token = jsonwebtoken.sign({ id: user._id }, "AB123", {
+            expiresIn: "1h",
+          });
+          // cookie
+          user.token = token;
+          const options = {
+            expiresIn: new Date(Date.now() + 1 * 60 * 60),
+          };
+          replay
+            .code(200)
+            .cookie("token", token, options)
+            .send("Login Successfull");
+        }
       }
     }
   } catch (error) {
@@ -29,11 +68,11 @@ export async function createUser(req, replay) {
 
 export async function getUser(req, replay) {
   try {
-    const { Email, Password } = req.body;
-    if (!(Email && Password)) {
-      replay.code(400).send("All fields are compulsorry!");
+    const user = await User.findById({ id: req.user._id }).select("-password");
+    if (!user) {
+      replay.code(404).send("User Not Found");
     } else {
-    
+      replay.code(200).send({ user });
     }
   } catch (error) {
     replay.code(500).send(error);
@@ -46,6 +85,12 @@ export async function updateUser(req, replay) {
     if (!(username && email && password)) {
       replay.code(400).send("All fields are compulsorry!");
     } else {
+      const user = User.findById(req.params.id);
+      if (!user) {
+        replay.code(404).send("User not found");
+      } else{
+
+      }
     }
   } catch (error) {
     replay.code(500).send(error);

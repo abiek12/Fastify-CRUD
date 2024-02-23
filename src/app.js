@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
 import Mongoose from "mongoose";
+import fastifyCookie from "fastify-cookie";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ Mongoose.connect("mongodb://localhost:27017/users", {
     console.error("Failed to connect to MongoDB", err);
   });
 
+fastify.register(fastifyCookie);
 // Routes
 fastify.register(userRoutes, { prefix: "/api/user" });
 

@@ -1,4 +1,10 @@
-import { getUser,createUser,updateUser,deleteUser } from "../controllers/userControllers.js";
+import {
+  createUser,
+  logIn,
+  getUser,
+  updateUser,
+  deleteUser,
+} from "../controllers/userControllers.js";
 const userSchema = {
   schema: {
     type: "object",
@@ -12,8 +18,10 @@ const userSchema = {
 
 async function userRoutes(fastify, options, done) {
   // Registraion
-  fastify.post("/", createUser);
+  fastify.post("/signup", createUser);
   // Login
+  fastify.post("/login", logIn);
+  //Get user info
   fastify.get("/:id", getUser);
   // Update
   fastify.put("/:id", updateUser);
