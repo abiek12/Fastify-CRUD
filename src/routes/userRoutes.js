@@ -5,6 +5,8 @@ import {
   updateUser,
   deleteUser,
 } from "../controllers/userControllers.js";
+import { auth } from "../middlewares/auth.js";
+
 const userCreateSchema = {
   schema: {
     body: {
@@ -21,15 +23,15 @@ const userCreateSchema = {
 
 async function userRoutes(fastify, options, done) {
   // Registraion
-  fastify.post("/signup", userCreateSchema, createUser);
+  fastify.post("/signup", createUser);
   // Login
   fastify.post("/login", logIn);
   //Get user info
-  fastify.get("/:id", getUser);
+  fastify.get("/:id", { preHandler: auth }, getUser);
   // Update
-  fastify.put("/:id", userCreateSchema, updateUser);
+  fastify.put("/:id", { preHandler: auth }, updateUser);
   // Delete
-  fastify.delete("/:id", userCreateSchema, deleteUser);
+  fastify.delete("/:id", { preHandler: auth }, deleteUser);
   done();
 }
 export default userRoutes;

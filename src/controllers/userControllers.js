@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 
+
 export async function createUser(req, replay) {
   try {
     const { Username, Email, Password } = req.body;
@@ -46,12 +47,12 @@ export async function logIn(req, replay) {
         } else {
           // JWT
           const token = jsonwebtoken.sign({ id: user._id }, "AB123", {
-            expiresIn: "1h",
+            expiresIn: "1m",
           });
           // cookie
           user.token = token;
           const options = {
-            expiresIn: new Date(Date.now() + 1 * 60 * 60),
+            expires: new Date(Date.now() + 60 * 60),
           };
           replay
             .code(200)
