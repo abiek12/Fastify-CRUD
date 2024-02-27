@@ -2,7 +2,6 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 
-
 export async function createUser(req, replay) {
   try {
     const { Username, Email, Password } = req.body;
@@ -30,7 +29,7 @@ export async function createUser(req, replay) {
 }
 
 export async function logIn(req, replay) {
-  try {
+  try {     
     const { Email, Password } = req.body;
     if (!(Email && Password)) {
       replay.code(400).send("All fields are compulsorry!");
@@ -52,7 +51,7 @@ export async function logIn(req, replay) {
           // cookie
           user.token = token;
           const options = {
-            expires: new Date(Date.now() + 60 * 60),
+            expiresIn: new Date(Date.now() + 60 * 60),
           };
           replay
             .code(200)
@@ -68,7 +67,8 @@ export async function logIn(req, replay) {
 
 export async function getUser(req, replay) {
   try {
-    const user = await User.findById({ id: req.user._id }).select("-password");
+    const user = await User.findById({ id: req.user.id }).select("-password");
+    console.log(user);
     if (!user) {
       replay.code(404).send("User Not Found");
     } else {
