@@ -52,6 +52,7 @@ export async function logIn(req, replay) {
           user.token = token;
           const options = {
             expiresIn: new Date(Date.now() + 60 * 60),
+            httpOnly: true,
           };
           replay
             .code(200)
@@ -67,8 +68,8 @@ export async function logIn(req, replay) {
 
 export async function getUser(req, replay) {
   try {
+    console.log(req);
     const user = await User.findById({ id: req.user.id }).select("-password");
-    console.log(user);
     if (!user) {
       replay.code(404).send("User Not Found");
     } else {
