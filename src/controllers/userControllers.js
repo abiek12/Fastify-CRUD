@@ -29,7 +29,7 @@ export async function createUser(req, replay) {
 }
 
 export async function logIn(req, replay) {
-  try {     
+  try {
     const { Email, Password } = req.body;
     if (!(Email && Password)) {
       replay.code(400).send("All fields are compulsorry!");
@@ -89,8 +89,9 @@ export async function updateUser(req, replay) {
       if (!user) {
         replay.code(404).send("User not found");
       } else {
+        const hashedPassword = await bcrypt.hash(Password, 10);
         await user.updateOne({
-          $set: { userName: Username, email: Email, password: Password },
+          $set: { userName: Username, email: Email, password: hashedPassword },
         });
         replay.code(200).send("Updated Successfully");
       }
